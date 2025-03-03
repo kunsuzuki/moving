@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "pages:build": "npx @cloudflare/next-on-pages"
+    "pages:build": "npx @cloudflare/next-on-pages",
+    "deploy": "npm run build && wrangler pages deploy .vercel/output/static"
   },
   "dependencies": {
     "@cloudflare/kv-asset-handler": "^0.3.4",
