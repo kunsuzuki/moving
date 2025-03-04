@@ -1,101 +1,161 @@
-import Image from "next/image";
+// src/app/page.tsx
+'use client'
+
+import { useState, useEffect } from 'react'
+import { CheckCircle, Circle } from 'lucide-react'
+
+interface Task {
+  id: string
+  title: string
+  isCompleted: boolean
+  category: string
+}
+
+interface TaskGroup {
+  title: string
+  tasks: Task[]
+}
+
+const defaultTasks: TaskGroup[] = [
+  {
+    title: '2ヶ月前',
+    tasks: [
+      { id: '1', title: '新居の下見と採寸', isCompleted: false, category: '2months' },
+      { id: '2', title: '引越し日程の仮決定', isCompleted: false, category: '2months' },
+      { id: '3', title: '初期費用の支払い', isCompleted: false, category: '2months' },
+      { id: '4', title: '引越し業者の見積もり比較', isCompleted: false, category: '2months' },
+      { id: '5', title: '不要な家具や所持品の整理', isCompleted: false, category: '2months' },
+      { id: '6', title: '住民票の転出届の準備', isCompleted: false, category: '2months' },
+      { id: '7', title: '銀行・クレジットカード会社への住所変更連絡', isCompleted: false, category: '2months' },
+    ]
+  },
+  {
+    title: '1ヶ月前',
+    tasks: [
+      { id: '8', title: '電気・ガス・水道の解約手続き', isCompleted: false, category: '1month' },
+      { id: '9', title: 'インターネットの解約・新規契約手続き', isCompleted: false, category: '1month' },
+      { id: '10', title: '不用品の処分計画', isCompleted: false, category: '1month' },
+    ]
+  },
+  {
+    title: '2週間前',
+    tasks: [
+      { id: '11', title: '使用頻度の低い物から順次梱包', isCompleted: false, category: '2weeks' },
+      { id: '12', title: '貴重品や大切な書類の分別', isCompleted: false, category: '2weeks' },
+      { id: '13', title: '引越し当日に必要な荷物の準備', isCompleted: false, category: '2weeks' },
+    ]
+  },
+  {
+    title: '当日',
+    tasks: [
+      { id: '14', title: '旧居の清掃', isCompleted: false, category: 'today' },
+      { id: '15', title: '立会い、荷物の搬出確認', isCompleted: false, category: 'today' },
+      { id: '16', title: '旧居の最終点検', isCompleted: false, category: 'today' },
+      { id: '17', title: '鍵の返却', isCompleted: false, category: 'today' },
+      { id: '18', title: '市区町村での住民票変更', isCompleted: false, category: 'today' },
+      { id: '19', title: '国民健康保険の変更', isCompleted: false, category: 'today' },
+      { id: '20', title: 'マイナンバーカードの住所変更', isCompleted: false, category: 'today' },
+      { id: '21', title: 'インターネットの開通確認', isCompleted: false, category: 'today' },
+      { id: '22', title: '電気の開通確認', isCompleted: false, category: 'today' },
+      { id: '23', title: 'ガスの開通確認', isCompleted: false, category: 'today' },
+      { id: '25', title: '水道の開通確認', isCompleted: false, category: 'today' },
+      { id: '26', title: '近隣の確認（ゴミ出しルール、防災情報）', isCompleted: false, category: 'today' },
+    ]
+  }
+]
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [taskGroups, setTaskGroups] = useState<TaskGroup[]>(defaultTasks)
+  const [progress, setProgress] = useState(0)
+  const [isLoaded, setIsLoaded] = useState(false)
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  // LocalStorageからの読み込みは初回マウント時のみ行う
+  useEffect(() => {
+    const saved = localStorage.getItem('movingTasks')
+    if (saved) {
+      setTaskGroups(JSON.parse(saved))
+    }
+    setIsLoaded(true)
+  }, [])
+
+  // タスクの変更を保存
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem('movingTasks', JSON.stringify(taskGroups))
+      calculateProgress()
+    }
+  }, [taskGroups, isLoaded])
+
+  const calculateProgress = () => {
+    const totalTasks = taskGroups.reduce((acc, group) => acc + group.tasks.length, 0)
+    const completedTasks = taskGroups.reduce((acc, group) => {
+      return acc + group.tasks.filter(task => task.isCompleted).length
+    }, 0)
+    setProgress(Math.round((completedTasks / totalTasks) * 100))
+  }
+
+  const toggleTask = (groupIndex: number, taskIndex: number) => {
+    const newTaskGroups = [...taskGroups]
+    newTaskGroups[groupIndex].tasks[taskIndex].isCompleted = 
+      !newTaskGroups[groupIndex].tasks[taskIndex].isCompleted
+    setTaskGroups(newTaskGroups)
+  }
+
+  // isLoaded が false の間は何も表示しない（オプション）
+  if (!isLoaded) {
+    return null
+  }
+
+  return (
+    <main className="min-h-screen bg-gray-50">
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">引越しチェックリスト</h1>
+          
+          {/* Progress Bar */}
+          <div className="mb-8">
+            <div className="flex justify-between mb-2">
+              <span className="text-sm font-medium text-gray-700">進捗状況</span>
+              <span className="text-sm font-medium text-gray-700">{progress}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <div 
+                className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+          </div>
+
+          {/* Task Groups */}
+          {taskGroups.map((group, groupIndex) => (
+            <div key={group.title} className="mb-8">
+              <h2 className="text-lg font-semibold text-gray-800 mb-4">{group.title}</h2>
+              <div className="space-y-3">
+                {group.tasks.map((task, taskIndex) => (
+                  <div
+                    key={task.id}
+                    className="flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    <button
+                      onClick={() => toggleTask(groupIndex, taskIndex)}
+                      className="flex items-center space-x-3 w-full"
+                    >
+                      {task.isCompleted ? (
+                        <CheckCircle className="w-5 h-5 text-blue-600" />
+                      ) : (
+                        <Circle className="w-5 h-5 text-gray-400" />
+                      )}
+                      <span className={`text-gray-700 ${task.isCompleted ? 'line-through text-gray-400' : ''}`}>
+                        {task.title}
+                      </span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+      </div>
+    </main>
+  )
 }
