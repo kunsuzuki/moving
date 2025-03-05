@@ -67,24 +67,26 @@ const defaultTasks: TaskGroup[] = [
 export default function Home() {
   const [taskGroups, setTaskGroups] = useState<TaskGroup[]>(defaultTasks)
   const [progress, setProgress] = useState(0)
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
 
-  // LocalStorageからの読み込みは初回マウント時のみ行う
+  // クライアントサイドでのみ実行されるようにする
   useEffect(() => {
+    setIsMounted(true)
     const saved = localStorage.getItem('movingTasks')
     if (saved) {
       setTaskGroups(JSON.parse(saved))
     }
-    setIsLoaded(true)
+    // 初回マウント時に進捗状況を計算
+    calculateProgress()
   }, [])
 
-  // タスクの変更を保存
+  // タスクの変更を保存（クライアントサイドでのみ実行）
   useEffect(() => {
-    if (isLoaded) {
+    if (isMounted) {
       localStorage.setItem('movingTasks', JSON.stringify(taskGroups))
       calculateProgress()
     }
-  }, [taskGroups, isLoaded])
+  }, [taskGroups, isMounted])
 
   const calculateProgress = () => {
     const totalTasks = taskGroups.reduce((acc, group) => acc + group.tasks.length, 0)
@@ -101,11 +103,7 @@ export default function Home() {
     setTaskGroups(newTaskGroups)
   }
 
-  // isLoaded が false の間は何も表示しない（オプション）
-  if (!isLoaded) {
-    return null
-  }
-
+  // サーバーサイドレンダリング時はデフォルトの状態を表示
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto p-6">
