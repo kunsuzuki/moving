@@ -47,28 +47,6 @@ export default function Header() {
         >
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
-
-        {/* PCナビゲーション（デスクトップ用） */}
-        <nav className="hidden md:flex items-center space-x-4">
-          <Link 
-            href="/" 
-            className="px-4 py-2 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
-          >
-            ホーム
-          </Link>
-          <Link 
-            href="/privacy-policy" 
-            className="px-4 py-2 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
-          >
-            プライバシーポリシー
-          </Link>
-          <Link 
-            href="/terms" 
-            className="px-4 py-2 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
-          >
-            利用規約
-          </Link>
-        </nav>
       </div>
 
       {/* モバイルメニュー（全画面オーバーレイ） */}
@@ -94,6 +72,13 @@ export default function Header() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 ホーム
+              </Link>
+              <Link 
+                href="/recommend" 
+                className="px-4 py-3 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors text-center font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                引越しおすすめリンク
               </Link>
               <Link 
                 href="/privacy-policy" 
