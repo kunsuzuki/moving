@@ -26,6 +26,16 @@ export default function Sidebar() {
             ホーム
           </Link>
           <Link
+            href="/recommend"
+            className={`block px-4 py-2 rounded-md transition-colors ${
+              isActive('/recommend') 
+                ? 'bg-blue-100 text-blue-800 font-medium' 
+                : 'bg-blue-50 text-blue-700 hover:bg-blue-100'
+            }`}
+          >
+            引越しおすすめリンク
+          </Link>
+          <Link
             href="/privacy-policy"
             className={`block px-4 py-2 rounded-md transition-colors ${
               isActive('/privacy-policy') 
