@@ -52,7 +52,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           
           {/* 説明文 - モバイルでは常に表示、デスクトップでは開閉可能 */}
           <div className="description-container">
-            <div className={`text-gray-700 text-sm ${isExpanded ? '' : 'line-clamp-3 md:line-clamp-2'}`}>
+            <div className={`text-gray-700 text-sm ${isExpanded ? '' : 'line-clamp-4 md:line-clamp-4'}`}>
               {link.description}
             </div>
             {link.description.length > 100 && (
